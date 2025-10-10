@@ -1,0 +1,17 @@
+# Dependencias
+/node_modules
+/package-lock.json
+
+# Compilación de Vite
+/dist
+
+# Logs y Cache
+npm-debug.log*
+.npm
+.cache
+
+# Entorno local (Ignorar las functions de Netlify en local, si usaste netlify dev)
+.netlify/
+
+# Variables de entorno (¡CRÍTICO para seguridad!)
+.env
