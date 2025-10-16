@@ -1,18 +1,23 @@
-# netlify.toml (en la raíz del proyecto)
 
 [build]
+  
+  base = "frontend"
+  
+  
   functions = "netlify/functions"
-  publish = "dist" 
-
+  
+  
+  command = "npm run build"
+  
+ 
+  publish = "frontend/dist" 
 [dev]
-  # El comando real para iniciar tu app de React
+
   command = "npm run dev"
   
-  # El puerto que usa tu servidor React (Vite) en segundo plano
+
   targetPort = 5173 
-  
-  # El puerto que Netlify expone (ya configurado en 8888)
   port = 8888
   
-  # Especificamos que estamos usando el framework Vite
+  
   framework = "vite"
