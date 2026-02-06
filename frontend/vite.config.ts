@@ -5,9 +5,12 @@ import react from "@vitejs/plugin-react";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [
-    react(), // Solo incluimos el plugin de React
-  ], // <-- CIERRE CORRECTO DE LA MATRIZ DE PLUGINS
+  plugins: [react()],
+  server: {
+    // 👇 ESTA ES LA LÍNEA MÁGICA:
+    allowedHosts: true, 
+  },
+ // <-- CIERRE CORRECTO DE LA MATRIZ DE PLUGINS
   optimizeDeps: {
     exclude: ["lucide-react"], // Esta línea no es necesaria para el build, pero la mantenemos si la usas en dev
     include: ["libphonenumber-js"],

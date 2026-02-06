@@ -1,7 +1,14 @@
-// src/components/layout/Navbar.tsx (Refactorizado)
-
 import { useState } from "react";
-import { ShoppingCart, Menu, X, Search, User } from "lucide-react";
+import { 
+  ShoppingBag, 
+  Menu, 
+  X, 
+  Search, 
+  User, 
+  Instagram, 
+  Mail, 
+  Leaf 
+} from "lucide-react";
 
 type NavbarProps = {
   onNavigate: (page: string) => void;
@@ -10,89 +17,148 @@ type NavbarProps = {
 
 export default function Navbar({ onNavigate, cartItemCount }: NavbarProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isShopOpen, setIsShopOpen] = useState(false);
+
+  // Mapeo de botones del menú principal
+  const menuItems = [
+    { label: "Tienda", action: "shop" },
+    { label: "Bitacora de Plantas", action: "rentals" },
+    { label: "Herbario Vivo", action: "projects" },
+    { label: "Nosotros", action: "about" },
+    { label: "Contacto", action: "contact" },
+  ];
 
   return (
-    <nav className="bg-white shadow-md sticky top-0 z-50 border-b border-gray-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          <div className="flex items-center">
-            <button
-              onClick={() => onNavigate("home")}
-              // Logo con acento verde
-              className="text-2xl font-bold text-primary-green hover:text-dark-slate transition-colors"
-            >
-              Herbalgood
-            </button>
-          </div>
+    <div className="w-full font-sans bg-white shadow-sm relative z-50">
+      
+      {/* 1. NIVEL SUPERIOR: Marquesina (Verde) */}
+      <div className="bg-primary-green text-white text-[10px] md:text-xs py-2 overflow-hidden whitespace-nowrap border-b border-white/10">
+        <div className="inline-block animate-marquee">
+          {[...Array(6)].map((_, i) => (
+             <span key={i} className="mx-8 font-bold uppercase tracking-widest">
+               🛻 Envío Gratis sobre $100.000 en RM 🚛
+             </span>
+          ))}
+        </div>
+      </div>
 
-          <div className="hidden md:flex items-center space-x-8">
-            {/* Navegación Principal */}
-            {["home", "shop", "blog", "about", "contact"].map((page) => (
-              <button
-                key={page}
-                onClick={() => onNavigate(page)}
-                className="text-dark-slate hover:text-primary-green transition-colors font-medium capitalize"
-              >
-                {page === "home" ? "Home" : page === "shop" ? "Shop" : page}
-              </button>
-            ))}
+      {/* 2. NIVEL MEDIO: Barra de Información (🌸 ROSA PALO) */}
+      <div className="bg-brand-rose text-white py-2 px-4 text-xs md:text-sm font-medium hidden md:block border-b border-white/20">
+        <div className="max-w-7xl mx-auto flex justify-between items-center">
+           {/* Izquierda: Redes */}
+           <div className="flex items-center gap-4">
+              <a href="#" className="flex items-center gap-2 hover:text-dark-slate transition-colors">
+                <Instagram size={14} /> <span className="font-bold">@pinpilinpausha</span>
+              </a>
+           </div>
+           {/* Derecha: Correo */}
+           <div className="flex items-center gap-2 hover:text-dark-slate transition-colors cursor-pointer">
+              <Mail size={14} /> 
+              <span className="tracking-wide">hola@pinpilinpausha.cl</span>
+           </div>
+        </div>
+      </div>
 
-            {/* Submenú de Shop (Desplegable) */}
-            <div className="relative group">
-              {isShopOpen && (
-                <div
-                  onMouseEnter={() => setIsShopOpen(true)}
-                  onMouseLeave={() => setIsShopOpen(false)}
-                  className="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-xl py-2 z-50 border border-gray-100"
-                ></div>
-              )}
+      {/* 3. NIVEL PRINCIPAL: Navegación (Con Textura) */}
+      {/* CORRECCIÓN AQUÍ: Agregué el espacio en 'nav className' y la textura de fondo */}
+      <nav 
+        className="sticky top-0 py-4 px-4 transition-all bg-cover bg-center shadow-sm"
+        style={{
+          backgroundImage: `linear-gradient(rgba(255,255,255,0.96), rgba(255,255,255,0.94)), url('https://images.pexels.com/photos/3394966/pexels-photo-3394966.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1')`
+        }}
+      >
+        <div className="max-w-7xl mx-auto flex justify-between items-center">
+          
+          {/* A. LOGO + SUBTÍTULO (Izquierda) */}
+          <div 
+            className="flex items-center gap-2 cursor-pointer group" 
+            onClick={() => onNavigate("home")}
+          >
+            <div className="bg-primary-green p-1.5 rounded-md text-white group-hover:rotate-12 transition-transform shadow-sm">
+               <Leaf size={24} />
+            </div>
+            <div className="flex flex-col leading-none">
+              <span className="text-xl md:text-2xl font-bold text-dark-slate tracking-tight group-hover:text-primary-green transition-colors">
+                PINPILINPAUSHA
+              </span>
+              <span className="text-[10px] text-gray-400 uppercase tracking-[0.2em] font-medium">
+               Plantas Y Antiguedades
+              </span>
             </div>
           </div>
 
-          {/* Íconos de Acción */}
-          <div className="flex items-center space-x-4">
-            <button
-              onClick={() => onNavigate("cart")}
-              className="relative text-dark-slate hover:text-primary-green transition-colors"
-            >
-              <ShoppingCart size={20} />
-              {cartItemCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-primary-green text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
-                  {cartItemCount}
-                </span>
-              )}
-            </button>
+          {/* B. MENÚ DE ESCRITORIO (Centro) */}
+          <div className="hidden lg:flex items-center gap-6 xl:gap-8 text-sm font-bold text-gray-600 uppercase tracking-wide">
+            {menuItems.map((item) => (
+              <button
+                key={item.label}
+                onClick={() => onNavigate(item.action)}
+                className="hover:text-primary-green hover:underline underline-offset-4 decoration-2 transition-all"
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
 
-            <button
+          {/* C. ICONOS DE ACCIÓN (Derecha) */}
+          <div className="flex items-center gap-4 md:gap-6 text-dark-slate">
+            {/* Lupa (Buscar) */}
+            <button className="hover:text-primary-green transition-colors hidden sm:block">
+              <Search size={20} strokeWidth={2} />
+            </button>
+         <button 
+        onClick={() => onNavigate('account')} // 👈 AGREGA ESTA LÍNEA
+        className="hover:text-primary-green transition-colors"
+        aria-label="Mi Cuenta"
+      >
+        <User size={20} strokeWidth={2} />
+      </button>
+      {/* 👆 FIN DEL CAMBIO 👆 */}
+
+      {/* Botón de Carrito */}
+      <button 
+        onClick={() => onNavigate('cart')} 
+        className="relative hover:text-primary-green transition-colors"
+      >
+        <ShoppingBag size={20} strokeWidth={2} />
+        {cartItemCount > 0 && (
+          <span className="absolute -top-2 -right-2 bg-primary-green text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full">
+            {cartItemCount}
+          </span>
+        )}
+      </button>
+
+            {/* Botón Menú Móvil (Hamburguesa) */}
+            <button 
+              className="lg:hidden text-dark-slate hover:text-primary-green"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden text-dark-slate hover:text-primary-green"
             >
               {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>
         </div>
 
-        {/* Menú Móvil */}
+        {/* MENÚ MÓVIL DESPLEGABLE */}
         {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-gray-100">
-            <div className="flex flex-col space-y-3">
-              {["home", "shop", "blog", "about", "contact"].map((page) => (
-                <button
-                  key={`mobile-${page}`}
-                  onClick={() => {
-                    onNavigate(page);
-                    setIsMenuOpen(false);
-                  }}
-                  className="text-dark-slate hover:text-primary-green transition-colors text-left font-medium px-4 py-1 capitalize"
-                >
-                  {page === "home" ? "Home" : page === "shop" ? "Shop" : page}
-                </button>
-              ))}
+          <div className="lg:hidden absolute top-full left-0 w-full bg-white border-t border-gray-100 shadow-xl py-4 flex flex-col z-50 animate-fade-in-down">
+            {menuItems.map((item) => (
+              <button 
+                key={item.label}
+                onClick={() => { 
+                  onNavigate(item.action); 
+                  setIsMenuOpen(false); 
+                }} 
+                className="text-left px-6 py-3 border-b border-gray-50 text-gray-700 font-medium hover:bg-gray-50 hover:text-primary-green hover:pl-8 transition-all"
+              >
+                {item.label}
+              </button>
+            ))}
+            <div className="px-6 py-4 flex gap-4 border-t border-gray-100 mt-2">
+                <button className="flex items-center gap-2 text-sm text-gray-500"><Search size={16}/> Buscar</button>
+                <button className="flex items-center gap-2 text-sm text-gray-500"><User size={16}/> Cuenta</button>
             </div>
           </div>
         )}
-      </div>
-    </nav>
+      </nav>
+    </div>
   );
 }

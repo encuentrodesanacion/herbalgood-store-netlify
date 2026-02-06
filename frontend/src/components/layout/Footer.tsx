@@ -13,11 +13,10 @@ export default function Footer({ onNavigate }: FooterProps) {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <h3 className="text-xl font-bold mb-4 text-primary-green">
-              Herbalgood
+            Pinpilinpausha
             </h3>
             <p className="text-gray-400 text-sm leading-relaxed">
-              Tu fuente de productos naturales y orgánicos para el bienestar
-              holístico. Calidad, pureza y resultados garantizados.
+              Tu fuente de productos naturales <br></br>para el bienestar de tu hogar.
             </p>
           </div>
 

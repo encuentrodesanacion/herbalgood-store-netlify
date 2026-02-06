@@ -42,7 +42,7 @@ export default function Shop({ onNavigate }: ShopProps) {
   };
 
   // Simulación de Filtros (solo UI)
-  const categories = ["Tés", "Suplementos", "Belleza", "Kits", "Café"];
+  const categories = ["Mas vendidos","Plantas", "Articulos de Terraza", ,"Antiguedades", ];
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
