@@ -18,6 +18,12 @@ const User = sequelize.define('User', {
   password: {
     type: DataTypes.STRING,
     allowNull: false
+  },
+  // --- NUEVOS CAMPOS ---
+  role: {
+    type: DataTypes.STRING,
+    defaultValue: 'customer', // 'customer' para clientes, 'admin' para ti
+    allowNull: false
   }
 });
 

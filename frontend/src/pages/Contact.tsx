@@ -1,5 +1,7 @@
+// src/pages/Contact.tsx
+
 import { useState } from "react";
-import { Mail, Phone, MapPin, Clock, Instagram, Send, MessageCircle, ArrowRight } from "lucide-react";
+import { Mail, Phone, MapPin, Clock, Instagram, Send, MessageCircle, ArrowRight, Rabbit } from "lucide-react";
 
 type ContactProps = {
   onNavigate: (page: string) => void;
@@ -18,20 +20,20 @@ export default function Contact({ onNavigate }: ContactProps) {
   };
 
   return (
-    <div className="min-h-screen bg-natural-cream font-sans text-dark-slate">
+    <div className="min-h-screen bg-green-50/50 font-sans text-stone-900">
       
       {/* Header Contacto */}
-      <header className="relative py-20 px-4 text-center bg-white shadow-sm overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+      <header className="relative py-20 px-4 text-center bg-white shadow-sm overflow-hidden border-b border-green-100">
+        <div className="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/leaves-pattern.png')]"></div>
         <div className="relative z-10 max-w-4xl mx-auto">
-          <span className="text-brand-rose font-bold tracking-[0.2em] uppercase text-xs mb-4 block">
-            Estamos aquí para ti
+          <span className="text-green-600 font-bold tracking-[0.2em] uppercase text-xs mb-4 block">
+            Estamos aquí para ti y tu futuro compañero
           </span>
-          <h1 className="text-5xl md:text-6xl font-bold text-dark-slate mb-6 font-serif">
-            Hablemos de Plantas
+          <h1 className="text-5xl md:text-6xl font-bold text-stone-900 mb-6 font-serif flex items-center justify-center gap-4">
+            Hablemos <Rabbit size={48} className="text-green-600" />
           </h1>
-          <p className="text-xl text-gray-600 font-light max-w-2xl mx-auto italic">
-            ¿Tienes dudas sobre cuidados, buscas un proyecto a medida o simplemente quieres saludar? Escríbenos.
+          <p className="text-xl text-stone-600 font-light max-w-2xl mx-auto italic">
+            ¿Tienes dudas sobre la llegada de tu orejudo, buscas información sobre próximas camadas o necesitas asesoría sobre cuidados? Escríbenos.
           </p>
         </div>
       </header>
@@ -41,47 +43,48 @@ export default function Contact({ onNavigate }: ContactProps) {
           
           {/* COLUMNA IZQUIERDA: Información */}
           <div className="space-y-10">
-            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 relative overflow-hidden group">
-               <div className="absolute top-0 right-0 w-32 h-32 bg-brand-bg rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-500"></div>
+            <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-stone-100 relative overflow-hidden group">
+               <div className="absolute top-0 right-0 w-32 h-32 bg-green-50 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-500"></div>
                
-               <h3 className="text-2xl font-bold mb-8 font-serif">Visítanos</h3>
+               <h3 className="text-2xl font-bold mb-8 font-serif text-stone-800">Visita nuestro Criadero</h3>
                
                <div className="space-y-6">
                  <div className="flex items-start gap-4">
-                    <div className="bg-brand-bg p-3 rounded-full text-primary-green shrink-0">
+                    <div className="bg-green-100 p-3 rounded-full text-green-700 shrink-0">
                       <MapPin size={24} />
                     </div>
                     <div>
-                      <h4 className="font-bold text-lg">Showroom & Vivero</h4>
-                      <p className="text-gray-600">Av. Nueva Providencia 1234, Of. 601<br/>Providencia, Santiago.</p>
-                      <a href="#" className="text-primary-green text-sm font-bold hover:underline mt-1 inline-block">Ver en Google Maps</a>
+                      <h4 className="font-bold text-lg text-stone-800">Instalaciones Rabbit Boutique</h4>
+                      <p className="text-stone-600">Parcela 42, Sector El Remanso<br/>Talagante, Región Metropolitana.</p>
+                      <a href="#" className="text-green-600 text-sm font-bold hover:underline mt-1 inline-block">Ver indicaciones en Google Maps</a>
                     </div>
                  </div>
 
                  <div className="flex items-start gap-4">
-                    <div className="bg-brand-bg p-3 rounded-full text-primary-green shrink-0">
+                    <div className="bg-green-100 p-3 rounded-full text-green-700 shrink-0">
                       <Clock size={24} />
                     </div>
                     <div>
-                      <h4 className="font-bold text-lg">Horarios</h4>
-                      <p className="text-gray-600">Lunes a Viernes: 10:00 - 19:00 hrs<br/>Sábados: 10:00 - 14:00 hrs</p>
+                      <h4 className="font-bold text-lg text-stone-800">Horarios de Visita</h4>
+                      <p className="text-stone-600 mb-1">Para no estresar a nuestros ejemplares, funcionamos exclusivamente mediante agenda previa.</p>
+                      <p className="text-stone-500 text-sm font-bold">Martes a Sábado: 10:00 - 17:00 hrs</p>
                     </div>
                  </div>
                </div>
             </div>
 
-            <div className="bg-dark-slate text-white p-8 rounded-3xl shadow-lg relative overflow-hidden">
+            <div className="bg-stone-900 text-white p-8 rounded-[2rem] shadow-lg relative overflow-hidden">
                <div className="relative z-10">
                  <h3 className="text-2xl font-bold mb-4 font-serif">Contacto Directo</h3>
-                 <div className="space-y-4">
-                   <a href="mailto:hola@pinpilinpausha.cl" className="flex items-center gap-3 hover:text-brand-rose transition-colors text-lg">
-                     <Mail className="text-brand-rose" /> hola@pinpilinpausha.cl
+                 <div className="space-y-4 mt-8">
+                   <a href="mailto:hola@rabbitboutique.cl" className="flex items-center gap-4 hover:text-green-400 transition-colors text-lg group">
+                     <Mail className="text-green-500 group-hover:scale-110 transition-transform" /> hola@rabbitboutique.cl
                    </a>
-                   <a href="tel:+56912345678" className="flex items-center gap-3 hover:text-brand-rose transition-colors text-lg">
-                     <Phone className="text-brand-rose" /> +56 9 1234 5678
+                   <a href="tel:+56912345678" className="flex items-center gap-4 hover:text-green-400 transition-colors text-lg group">
+                     <Phone className="text-green-500 group-hover:scale-110 transition-transform" /> +56 9 1234 5678
                    </a>
-                   <a href="#" className="flex items-center gap-3 hover:text-brand-rose transition-colors text-lg">
-                     <Instagram className="text-brand-rose" /> @pinpilinpausha
+                   <a href="#" className="flex items-center gap-4 hover:text-green-400 transition-colors text-lg group">
+                     <Instagram className="text-green-500 group-hover:scale-110 transition-transform" /> @rabbitboutique
                    </a>
                  </div>
                </div>
@@ -91,62 +94,63 @@ export default function Contact({ onNavigate }: ContactProps) {
           </div>
 
           {/* COLUMNA DERECHA: Formulario */}
-          <div className="bg-white p-8 md:p-12 rounded-3xl shadow-xl border-t-4 border-brand-rose">
+          <div className="bg-white p-8 md:p-12 rounded-[2rem] shadow-xl border-t-4 border-green-500">
             {formStatus === 'success' ? (
               <div className="h-full flex flex-col items-center justify-center text-center py-10 animate-fade-in-up">
-                <div className="w-20 h-20 bg-green-100 text-primary-green rounded-full flex items-center justify-center mb-6">
+                <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-6">
                   <Send size={40} />
                 </div>
-                <h3 className="text-3xl font-bold text-dark-slate mb-4">¡Mensaje Enviado!</h3>
-                <p className="text-gray-600 mb-8 max-w-md">
-                  Gracias por contactarnos. Nuestro equipo (humano, no botánico) te responderá dentro de las próximas 24 horas.
+                <h3 className="text-3xl font-bold text-stone-900 mb-4">¡Mensaje Enviado!</h3>
+                <p className="text-stone-600 mb-8 max-w-md">
+                  Gracias por escribirnos. Nuestro equipo (completamente humano, no orejudo) te responderá dentro de las próximas 24 horas.
                 </p>
                 <button 
                   onClick={() => setFormStatus('idle')}
-                  className="text-primary-green font-bold hover:underline"
+                  className="text-green-700 font-bold hover:underline"
                 >
                   Enviar otro mensaje
                 </button>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-6">
-                <h3 className="text-2xl font-bold mb-6 font-serif">Envíanos un mensaje</h3>
+                <h3 className="text-2xl font-bold mb-6 font-serif text-stone-800">Déjanos tus dudas</h3>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-sm font-bold text-gray-700 ml-1">Nombre</label>
-                    <input required type="text" placeholder="Tu nombre" className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-rose/50 focus:border-brand-rose transition-all" />
+                    <label className="text-sm font-bold text-stone-700 ml-1">Nombre</label>
+                    <input required type="text" placeholder="Tu nombre" className="w-full px-4 py-3 rounded-2xl bg-stone-50 border border-stone-200 focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:border-green-500 transition-all" />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-bold text-gray-700 ml-1">Apellido</label>
-                    <input type="text" placeholder="Tu apellido" className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-rose/50 focus:border-brand-rose transition-all" />
+                    <label className="text-sm font-bold text-stone-700 ml-1">Apellido</label>
+                    <input type="text" placeholder="Tu apellido" className="w-full px-4 py-3 rounded-2xl bg-stone-50 border border-stone-200 focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:border-green-500 transition-all" />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-gray-700 ml-1">Email</label>
-                  <input required type="email" placeholder="nombre@ejemplo.com" className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-rose/50 focus:border-brand-rose transition-all" />
+                  <label className="text-sm font-bold text-stone-700 ml-1">Email</label>
+                  <input required type="email" placeholder="nombre@ejemplo.com" className="w-full px-4 py-3 rounded-2xl bg-stone-50 border border-stone-200 focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:border-green-500 transition-all" />
                 </div>
 
                 <div className="space-y-2">
-                   <label className="text-sm font-bold text-gray-700 ml-1">Asunto</label>
-                   <select className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-rose/50 focus:border-brand-rose transition-all text-gray-600">
+                   <label className="text-sm font-bold text-stone-700 ml-1">Asunto</label>
+                   <select className="w-full px-4 py-3 rounded-2xl bg-stone-50 border border-stone-200 focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:border-green-500 transition-all text-stone-600">
+                     <option>Información sobre próximas camadas</option>
+                     <option>Asesoría de cuidados previos a la llegada</option>
+                     <option>Estado de mi reserva</option>
+                     <option>Consultas sobre alimentos y suministros</option>
                      <option>Consulta General</option>
-                     <option>Cotización Corporativa</option>
-                     <option>Estado de mi pedido</option>
-                     <option>Asesoría sobre cuidados</option>
                    </select>
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-gray-700 ml-1">Mensaje</label>
-                  <textarea required rows={5} placeholder="Cuéntanos, ¿en qué podemos ayudarte?" className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-rose/50 focus:border-brand-rose transition-all resize-none"></textarea>
+                  <label className="text-sm font-bold text-stone-700 ml-1">Mensaje</label>
+                  <textarea required rows={5} placeholder="Cuéntanos, ¿en qué podemos ayudarte o qué ejemplar buscas?" className="w-full px-4 py-3 rounded-2xl bg-stone-50 border border-stone-200 focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:border-green-500 transition-all resize-none"></textarea>
                 </div>
 
                 <button 
                   type="submit" 
                   disabled={formStatus === 'sending'}
-                  className="w-full bg-dark-slate text-white py-4 rounded-xl font-bold hover:bg-primary-green transition-all shadow-lg flex items-center justify-center gap-2 group"
+                  className="w-full bg-stone-900 text-white py-4 rounded-2xl font-bold hover:bg-green-600 transition-all shadow-lg flex items-center justify-center gap-2 group mt-4"
                 >
                   {formStatus === 'sending' ? (
                     "Enviando..."
@@ -160,17 +164,17 @@ export default function Contact({ onNavigate }: ContactProps) {
         </div>
 
         {/* FAQ Section */}
-        <div className="mt-20">
-           <h2 className="text-3xl font-bold text-center mb-10 font-serif">Preguntas Frecuentes</h2>
-           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="mt-24">
+           <h2 className="text-3xl font-bold text-center mb-10 font-serif text-stone-800">Preguntas Frecuentes sobre la Adopción</h2>
+           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {[
-                { q: "¿Hacen envíos a regiones?", a: "Por el momento, solo realizamos envíos de plantas vivas dentro de la Región Metropolitana para asegurar su bienestar." },
-                { q: "¿Las plantas tienen garantía?", a: "Sí, ofrecemos una garantía de 30 días. Si tu planta no se adapta o llega dañada, la evaluamos y reponemos." },
-                { q: "¿Ofrecen servicio de trasplante?", a: "¡Claro! Puedes traer tu macetero o comprar uno en la tienda y nosotros hacemos el trasplante con el sustrato adecuado." }
+                { q: "¿Hacen envíos a otras regiones?", a: "Para proteger el bienestar y evitar el estrés de nuestros conejos, las entregas se realizan exclusivamente de forma presencial en nuestras instalaciones o mediante transporte especializado dentro de la región." },
+                { q: "¿Entregan certificados de salud?", a: "Sí, todos nuestros ejemplares se entregan desparasitados, con su revisión veterinaria de exóticos al día y con una garantía de salud ante enfermedades congénitas." },
+                { q: "¿Ofrecen asesoría post-entrega?", a: "¡Por supuesto! Nuestra responsabilidad no termina cuando te llevas a tu conejo. Mantenemos comunicación abierta para apoyarte con su nutrición, adaptación y comportamiento a largo plazo." }
               ].map((faq, i) => (
-                <div key={i} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:border-brand-rose transition-colors">
-                   <h4 className="font-bold text-lg mb-3 text-dark-slate">{faq.q}</h4>
-                   <p className="text-gray-600 text-sm leading-relaxed">{faq.a}</p>
+                <div key={i} className="bg-white p-8 rounded-3xl shadow-sm border border-stone-100 hover:border-green-500/50 hover:shadow-md transition-all">
+                   <h4 className="font-bold text-lg mb-4 text-stone-800">{faq.q}</h4>
+                   <p className="text-stone-600 text-sm leading-relaxed">{faq.a}</p>
                 </div>
               ))}
            </div>

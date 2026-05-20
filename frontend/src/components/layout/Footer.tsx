@@ -1,6 +1,6 @@
-// src/components/layout/Footer.tsx (Refactorizado)
+// src/components/layout/Footer.tsx
 
-import { Facebook, Instagram, Twitter, Mail } from "lucide-react";
+import { Facebook, Instagram, Twitter, Mail, Rabbit } from "lucide-react";
 
 type FooterProps = {
   onNavigate: (page: string) => void;
@@ -8,125 +8,136 @@ type FooterProps = {
 
 export default function Footer({ onNavigate }: FooterProps) {
   return (
-    <footer className="bg-dark-slate text-white mt-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+    <footer className="bg-stone-950 text-white mt-20 font-sans border-t-4 border-green-600">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
+          
+          {/* Marca y Descripción */}
           <div>
-            <h3 className="text-xl font-bold mb-4 text-primary-green">
-            Pinpilinpausha
+            <h3 className="text-2xl font-bold mb-4 text-green-500 flex items-center gap-2">
+              <Rabbit size={28} /> Rabbit Boutique
             </h3>
-            <p className="text-gray-400 text-sm leading-relaxed">
-              Tu fuente de productos naturales <br></br>para el bienestar de tu hogar.
+            <p className="text-stone-400 text-sm leading-relaxed mb-6">
+              Expertos en cunicultura responsable y bienestar animal. Encuentra a tu compañero ideal y todo lo necesario para su cuidado óptimo.
             </p>
           </div>
 
+          {/* Enlaces de Tienda */}
           <div>
-            <h4 className="font-semibold mb-4">Shop</h4>
-            <ul className="space-y-2 text-sm">
+            <h4 className="text-lg font-bold mb-6 text-stone-100">La Boutique</h4>
+            <ul className="space-y-3 text-sm">
               <li>
                 <button
                   onClick={() => onNavigate("shop")}
-                  className="text-gray-400 hover:text-primary-green transition-colors"
+                  className="text-stone-400 hover:text-green-400 transition-colors"
                 >
-                  Todos los Productos
+                  Ejemplares Disponibles
                 </button>
               </li>
               <li>
                 <button
                   onClick={() => onNavigate("shop")}
-                  className="text-gray-400 hover:text-primary-green transition-colors"
+                  className="text-stone-400 hover:text-green-400 transition-colors"
                 >
-                  Más Vendidos
+                  Alimento y Heno Premium
                 </button>
               </li>
               <li>
                 <button
                   onClick={() => onNavigate("shop")}
-                  className="text-gray-400 hover:text-primary-green transition-colors"
+                  className="text-stone-400 hover:text-green-400 transition-colors"
                 >
-                  Nuevas Llegadas
+                  Accesorios y Hábitat
                 </button>
               </li>
             </ul>
           </div>
 
+          {/* Enlaces de Comunidad */}
           <div>
-            <h4 className="font-semibold mb-4">Compañía</h4>
-            <ul className="space-y-2 text-sm">
+            <h4 className="text-lg font-bold mb-6 text-stone-100">Comunidad</h4>
+            <ul className="space-y-3 text-sm">
               <li>
                 <button
                   onClick={() => onNavigate("about")}
-                  className="text-gray-400 hover:text-primary-green transition-colors"
+                  className="text-stone-400 hover:text-green-400 transition-colors"
                 >
-                  Sobre Nosotros
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => onNavigate("contact")}
-                  className="text-gray-400 hover:text-primary-green transition-colors"
-                >
-                  Contacto
+                  Nuestro Criadero
                 </button>
               </li>
               <li>
                 <button
                   onClick={() => onNavigate("blog")}
-                  className="text-gray-400 hover:text-primary-green transition-colors"
+                  className="text-stone-400 hover:text-green-400 transition-colors"
                 >
-                  Nuestro Blog
+                  Guías y Cuidados
                 </button>
               </li>
               <li>
-                <button className="text-gray-400 hover:text-primary-green transition-colors">
-                  Política de Privacidad
+                <button
+                  onClick={() => onNavigate("testimonios")}
+                  className="text-stone-400 hover:text-green-400 transition-colors font-medium"
+                >
+                  Familias Felices (Reseñas)
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => onNavigate("contact")}
+                  className="text-stone-400 hover:text-green-400 transition-colors"
+                >
+                  Contacto y Asesoría
                 </button>
               </li>
             </ul>
           </div>
 
+          {/* Redes Sociales */}
           <div>
-            <h4 className="font-semibold mb-4">Conéctate</h4>
-            <p className="text-gray-400 text-sm mb-4">
-              Síguenos para tips de bienestar y ofertas exclusivas.
+            <h4 className="text-lg font-bold mb-6 text-stone-100">Conéctate</h4>
+            <p className="text-stone-400 text-sm mb-6">
+              Síguenos para consejos veterinarios, tips de socialización y actualizaciones de nuevas camadas.
             </p>
-            <div className="flex space-x-3 mb-4">
+            <div className="flex space-x-3 mb-6">
               <a
                 href="#"
-                className="bg-gray-800 p-2 rounded-full hover:bg-primary-green transition-colors"
+                className="bg-stone-800 text-stone-300 p-2.5 rounded-full hover:bg-green-600 hover:text-white transition-all shadow-sm"
               >
                 <Facebook size={18} />
               </a>
               <a
                 href="#"
-                className="bg-gray-800 p-2 rounded-full hover:bg-primary-green transition-colors"
+                className="bg-stone-800 text-stone-300 p-2.5 rounded-full hover:bg-green-600 hover:text-white transition-all shadow-sm"
               >
                 <Instagram size={18} />
               </a>
               <a
                 href="#"
-                className="bg-gray-800 p-2 rounded-full hover:bg-primary-green transition-colors"
+                className="bg-stone-800 text-stone-300 p-2.5 rounded-full hover:bg-green-600 hover:text-white transition-all shadow-sm"
               >
                 <Twitter size={18} />
               </a>
               <a
-                href="#"
-                className="bg-gray-800 p-2 rounded-full hover:bg-primary-green transition-colors"
+                href="mailto:hola@rabbitboutique.cl"
+                className="bg-stone-800 text-stone-300 p-2.5 rounded-full hover:bg-green-600 hover:text-white transition-all shadow-sm"
               >
                 <Mail size={18} />
               </a>
             </div>
-            <p className="text-gray-400 text-xs mt-6">
-              🌱 Hecho con ingredientes naturales.
-            </p>
+            <div className="inline-block border border-green-500/30 bg-green-500/10 text-green-400 text-xs px-3 py-1.5 rounded-full">
+              🐇 Crianza Ética y Responsable
+            </div>
           </div>
         </div>
 
-        <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-400">
+        <div className="border-t border-stone-800 mt-12 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-stone-500">
           <p>
-            &copy; {new Date().getFullYear()} Herbalgood Store. Todos los
-            derechos reservados.
+            &copy; {new Date().getFullYear()} Rabbit Boutique. Todos los derechos reservados.
           </p>
+          <div className="flex gap-4">
+            <button className="hover:text-green-400 transition-colors">Términos y Condiciones</button>
+            <button className="hover:text-green-400 transition-colors">Política de Privacidad</button>
+          </div>
         </div>
       </div>
     </footer>
