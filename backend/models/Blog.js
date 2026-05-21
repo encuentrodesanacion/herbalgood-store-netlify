@@ -6,7 +6,7 @@ const Blog = sequelize.define('Blog', {
   title: { type: DataTypes.STRING, allowNull: false },
   content: { type: DataTypes.TEXT, allowNull: false },
   cover_image: { type: DataTypes.STRING },
-  author: { type: DataTypes.STRING, defaultValue: 'Mar de Miel' },
+  author: { type: DataTypes.STRING, defaultValue: 'Chileconejitos' },
   is_published: { type: DataTypes.BOOLEAN, defaultValue: false }
 });
 
