@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
-const Post = sequelize.define('Post', {
+const Guide = sequelize.define('Guide', {
   id: {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
@@ -11,7 +11,7 @@ const Post = sequelize.define('Post', {
     type: DataTypes.STRING,
     allowNull: false
   },
-  content: {
+  description: {
     type: DataTypes.TEXT,
     allowNull: false
   },
@@ -23,16 +23,10 @@ const Post = sequelize.define('Post', {
     type: DataTypes.STRING,
     allowNull: true
   },
-  // 👇 1. AGREGA ESTO PARA EL RESUMEN CORTO
-  excerpt: {
-    type: DataTypes.STRING(255),
-    allowNull: true
-  },
-  // 👇 2. AGREGA ESTO PARA EL CHECKBOX DE DESTACADO
-  is_featured: {
+  is_active: {
     type: DataTypes.BOOLEAN,
-    defaultValue: false
+    defaultValue: true
   }
 });
 
-module.exports = Post;
+module.exports = Guide;

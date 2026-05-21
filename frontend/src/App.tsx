@@ -42,7 +42,7 @@ function AppContent() {
       case "cart": navigate("/cart"); break;
       
       // 👇 AGREGA ESTE CASO PARA EL NAVBAR
-      case "blog": navigate("/BitacoraDePlantas"); break; 
+      case "blog": navigate("/cuidados"); break; 
       
       // Rutas personalizadas
       case "projects": navigate("/HerbarioVivo"); break;
@@ -52,7 +52,7 @@ function AppContent() {
       // Páginas informativas
       case "contact": navigate("/contact"); break; 
       case "post": if (productId) navigate(`/post/${productId}`); break;
-      case "about": navigate("/about"); break;
+      case "about": navigate("/criadero"); break;
       case "testimonials": navigate("/testimonios"); break;
       // 👇 4. LÓGICA INTELIGENTE PARA LA CUENTA
       case "account": 
@@ -87,13 +87,13 @@ function AppContent() {
           <Route path="/" element={<Home onNavigate={onNavigate} />} />
           <Route path="/shop" element={<Shop onNavigate={onNavigate} />} />
           <Route path="/product/:id" element={<ProductDetail onNavigate={onNavigate} />} />
-          <Route path="/post/:id" element={<PostDetail onNavigate={onNavigate} postId={""} />} />
+          <Route path="/post/:id" element={<PostDetail onNavigate={onNavigate} />} />
           <Route path="/cart" element={<CartPage onNavigate={onNavigate} />} />
           <Route path="/HerbarioVivo" element={<HerbarioVivo onNavigate={onNavigate} />} />
           <Route path="/contact" element={<Contact onNavigate={onNavigate} />} />
-          <Route path="/about" element={<About onNavigate={onNavigate} />} />
+          <Route path="/criadero" element={<About onNavigate={onNavigate} />} />
           <Route path="/hallazgos" element={<Hallazgos onNavigate={onNavigate} />} />
-          <Route path="/BitacoraDePlantas" element={<BitacoraDePlantas onNavigate={onNavigate} />} />
+          <Route path="/cuidados" element={<BitacoraDePlantas onNavigate={onNavigate} />} />
           <Route path="/testimonios" element={<TestimonialsSection onNavigate={onNavigate} />} />
 
           

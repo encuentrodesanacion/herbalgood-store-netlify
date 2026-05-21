@@ -2,6 +2,7 @@
 const express = require('express');
 const testimonialRoutes = require('./routes/testimonials');
 const cors = require('cors');
+const guidesRoutes = require('./routes/guides');
 const sequelize = require('./config/database');
 require('dotenv').config();
 
@@ -19,6 +20,7 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/products', require('./routes/products'));
 app.use('/uploads', express.static('uploads'));
 app.use('/api/testimonials', testimonialRoutes);
+app.use('/api/guides', guidesRoutes);
 
 const PORT = process.env.PORT || 5000;
 

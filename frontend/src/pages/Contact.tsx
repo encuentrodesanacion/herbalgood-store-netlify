@@ -54,7 +54,7 @@ export default function Contact({ onNavigate }: ContactProps) {
                       <MapPin size={24} />
                     </div>
                     <div>
-                      <h4 className="font-bold text-lg text-stone-800">Instalaciones Rabbit Boutique</h4>
+                      <h4 className="font-bold text-lg text-stone-800">Instalaciones Chileconejitos</h4>
                       <p className="text-stone-600">Parcela 42, Sector El Remanso<br/>Talagante, Región Metropolitana.</p>
                       <a href="#" className="text-green-600 text-sm font-bold hover:underline mt-1 inline-block">Ver indicaciones en Google Maps</a>
                     </div>
@@ -77,14 +77,14 @@ export default function Contact({ onNavigate }: ContactProps) {
                <div className="relative z-10">
                  <h3 className="text-2xl font-bold mb-4 font-serif">Contacto Directo</h3>
                  <div className="space-y-4 mt-8">
-                   <a href="mailto:hola@rabbitboutique.cl" className="flex items-center gap-4 hover:text-green-400 transition-colors text-lg group">
-                     <Mail className="text-green-500 group-hover:scale-110 transition-transform" /> hola@rabbitboutique.cl
+                   <a href="mailto:info@chileconejitos.cl" className="flex items-center gap-4 hover:text-green-400 transition-colors text-lg group">
+                     <Mail className="text-green-500 group-hover:scale-110 transition-transform" /> info@chileconejitos.cl
                    </a>
                    <a href="tel:+56912345678" className="flex items-center gap-4 hover:text-green-400 transition-colors text-lg group">
                      <Phone className="text-green-500 group-hover:scale-110 transition-transform" /> +56 9 1234 5678
                    </a>
                    <a href="#" className="flex items-center gap-4 hover:text-green-400 transition-colors text-lg group">
-                     <Instagram className="text-green-500 group-hover:scale-110 transition-transform" /> @rabbitboutique
+                     <Instagram className="text-green-500 group-hover:scale-110 transition-transform" /> @chileconejito
                    </a>
                  </div>
                </div>

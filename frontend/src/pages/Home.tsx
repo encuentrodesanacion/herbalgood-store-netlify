@@ -1,3 +1,5 @@
+// src/pages/Home.tsx
+
 import { useState, useEffect } from "react";
 import { Star, Rabbit, ShieldCheck, Heart, Leaf, ChevronLeft, ChevronRight, Loader2, Info, ArrowRight } from "lucide-react";
 import ProductCard from "../components/common/ProductCard";
@@ -13,11 +15,16 @@ export default function Home({ onNavigate }: HomeProps) {
   const [dbProducts, setDbProducts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  // 👇 NUEVOS ESTADOS PARA INTEGRACIÓN DIDÁCTICA DINÁMICA
+  const [featuredPosts, setFeaturedPosts] = useState<any[]>([]);
+  const [loadingSection, setLoadingSection] = useState(true);
+
   // ==========================================
   // URL BASE DEL BACKEND
   // ==========================================
-  const API_URL = 'http://localhost:5000';
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
+  // 1. Cargar Productos e Inventario
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -27,22 +34,17 @@ export default function Home({ onNavigate }: HomeProps) {
           const data = await response.json();
           
           const mappedData = data.map((item: any) => {
-            // Obtenemos la ruta de la BD
             let imgPath = item.image_url || item.image;
             let finalImageUrl = "";
 
             if (imgPath) {
-              // Si la ruta ya es un enlace completo (ej. fotos de prueba), la dejamos tal cual
               if (imgPath.startsWith('http')) {
                 finalImageUrl = imgPath;
               } else {
-                // Si es una ruta local de Multer (ej. uploads/foto.png), le agregamos la URL del backend
-                // Quitamos la barra inicial si la tiene para evitar 'http://localhost:5000//uploads...'
                 const cleanPath = imgPath.startsWith('/') ? imgPath.slice(1) : imgPath;
                 finalImageUrl = `${API_URL}/${cleanPath}`;
               }
             } else {
-              // Imagen por defecto si un producto no tiene foto
               finalImageUrl = "https://via.placeholder.com/400x300?text=Sin+Imagen";
             }
 
@@ -63,6 +65,27 @@ export default function Home({ onNavigate }: HomeProps) {
       }
     };
     fetchProducts();
+  }, []);
+
+  // 👇 2. NUEVA INTEGRACIÓN: Cargar de forma dinámica las últimas 2 guías didácticas
+  useEffect(() => {
+    const loadFeaturedPosts = async () => {
+      try {
+        setLoadingSection(true);
+        const response = await fetch(`${API_URL}/api/posts`);
+        if (response.ok) {
+          const data = await response.json();
+          // Tomamos únicamente los 2 artículos más recientes creados en el admin
+          setFeaturedPosts(data.slice(0, 2));
+        }
+      } catch (error) {
+        console.error("Error al cargar secciones didácticas de la bitácora:", error);
+      } finally {
+        setLoadingSection(false);
+      }
+    };
+
+    loadFeaturedPosts();
   }, []);
 
   const tabProducts = dbProducts
@@ -102,7 +125,7 @@ export default function Home({ onNavigate }: HomeProps) {
           </p>
         </div>
       </header>
-
+      
       {/* 2. CATEGORÍAS */}
       <section className="py-12 max-w-7xl mx-auto px-4 relative z-10">
          <div className="bg-white/90 p-8 rounded-3xl shadow-xl backdrop-blur-md">
@@ -201,31 +224,62 @@ export default function Home({ onNavigate }: HomeProps) {
         </div>
       </section>
 
-      {/* 4. SECCIÓN DIDÁCTICA */}
+      {/* 👇 4. SECCIÓN DIDÁCTICA INTEGRADA Y DINÁMICA */}
       <section className="py-20 max-w-7xl mx-auto px-4 text-center relative z-10">
          <div className="bg-white/60 backdrop-blur-md p-12 rounded-[3rem] border border-white/50">
            <span className="text-green-600 font-bold uppercase text-xs tracking-[0.2em] mb-4 block">Aprende con nosotros</span>
            <h2 className="text-4xl font-bold mb-12 text-stone-800">Guía de Cuidado para tu Conejo</h2>
            
-           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 h-auto md:h-[450px]">
-              <div className="relative group overflow-hidden h-full rounded-[2.5rem] shadow-2xl">
-                 <img src="https://images.pexels.com/photos/4001296/pexels-photo-4001296.jpeg" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" alt="Habitat" />
-                 <div className="absolute inset-0 bg-gradient-to-t from-stone-900/80 to-transparent flex flex-col justify-end p-10 text-left">
-                    <h3 className="text-white text-2xl font-bold mb-2">Hábitat Ideal</h3>
-                    <p className="text-stone-200 text-sm">Descubre cómo preparar el espacio perfecto para su comodidad y seguridad.</p>
-                 </div>
-              </div>
-              <div className="relative group overflow-hidden h-full rounded-[2.5rem] shadow-2xl">
-                 <img src="https://images.pexels.com/photos/372166/pexels-photo-372166.jpeg" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" alt="Alimentación" />
-                 <div className="absolute inset-0 bg-gradient-to-t from-green-900/80 to-transparent flex flex-col justify-end p-10 text-left">
-                    <h3 className="text-white text-2xl font-bold mb-2">Nutrición y Salud</h3>
-                    <p className="text-stone-200 text-sm">Base de heno, vegetales frescos y pellets. La clave para una vida larga.</p>
-                 </div>
-              </div>
-           </div>
+           {loadingSection ? (
+             <div className="flex flex-col items-center justify-center h-[450px] text-stone-400">
+               <Loader2 className="animate-spin mb-2 text-green-600" size={40} />
+               <p className="font-medium text-sm">Sincronizando con el Herbario...</p>
+             </div>
+           ) : featuredPosts.length === 0 ? (
+             <div className="flex flex-col items-center justify-center h-[200px] text-stone-400 border-2 border-dashed border-stone-200 rounded-[2.5rem] bg-white/40">
+               <p className="font-medium">Pronto publicaremos nuevas guías didácticas en esta sección.</p>
+             </div>
+           ) : (
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 h-auto md:h-[450px]">
+               {featuredPosts.map((post) => {
+                 // Sincronización inteligente de rutas locales y Cloudinary
+                 const imageUrl = post.image_url 
+                   ? (post.image_url.startsWith('http') ? post.image_url : `${API_URL}/${post.image_url}`)
+                   : "https://images.pexels.com/photos/4001296/pexels-photo-4001296.jpeg";
+
+                 return (
+                   <div 
+                     key={post.id}
+                     onClick={() => onNavigate('post', post.id)} // Redirección al artículo completo a pantalla completa
+                     className="relative group overflow-hidden h-full rounded-[2.5rem] shadow-2xl cursor-pointer border border-green-50"
+                   >
+                     <img 
+                       src={imageUrl} 
+                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" 
+                       alt={post.title} 
+                     />
+                     <div className="absolute inset-0 bg-gradient-to-t from-stone-900/90 via-stone-900/40 to-transparent flex flex-col justify-end p-10 text-left">
+                        <span className="bg-green-600 text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full w-fit mb-3">
+                          {post.category || 'General'}
+                        </span>
+                        <h3 className="text-white text-2xl font-bold mb-2 line-clamp-2 font-serif leading-tight">
+                          {post.title}
+                        </h3>
+                        <p className="text-stone-200 text-sm line-clamp-2 font-light leading-relaxed">
+                          {post.excerpt || post.content}
+                        </p>
+                     </div>
+                   </div>
+                 );
+               })}
+             </div>
+           )}
 
            <div className="mt-12">
-              <button onClick={() => onNavigate('guia')} className="bg-white border-2 border-stone-800 px-10 py-4 rounded-full font-bold hover:bg-stone-900 hover:text-white transition-all shadow-lg flex items-center gap-2 mx-auto">
+              <button 
+                onClick={() => onNavigate('blog')} // Te redirige al listado completo de la bitácora
+                className="bg-white border-2 border-stone-800 px-10 py-4 rounded-full font-bold hover:bg-stone-900 hover:text-white transition-all shadow-lg flex items-center gap-2 mx-auto"
+              >
                 <Info size={20} /> Explorar Guía Didáctica Completa
               </button>
            </div>
@@ -233,34 +287,7 @@ export default function Home({ onNavigate }: HomeProps) {
       </section>
 
       {/* 5. FOOTER / VALORES */}
-      <footer className="bg-stone-950 text-white py-20 relative z-10">
-        <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
-           <div className="flex flex-col items-center">
-              <div className="w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center mb-6 border border-green-500/20">
-                <Heart className="text-green-400" size={32} />
-              </div>
-              <h4 className="text-xl font-bold mb-2">Bienestar Animal</h4>
-              <p className="text-stone-400 text-sm">Priorizamos la salud y felicidad de cada conejo antes que la venta.</p>
-           </div>
-           <div className="flex flex-col items-center">
-              <div className="w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center mb-6 border border-green-500/20">
-                <Leaf className="text-green-400" size={32} />
-              </div>
-              <h4 className="text-xl font-bold mb-2">Crianza Natural</h4>
-              <p className="text-stone-400 text-sm">Ambientes libres de estrés y alimentación 100% orgánica.</p>
-           </div>
-           <div className="flex flex-col items-center">
-              <div className="w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center mb-6 border border-green-500/20">
-                <ShieldCheck className="text-green-400" size={32} />
-              </div>
-              <h4 className="text-xl font-bold mb-2">Garantía de Salud</h4>
-              <p className="text-stone-400 text-sm">Certificados veterinarios y seguimiento post-venta incluido.</p>
-           </div>
-        </div>
-        <div className="text-center mt-16 pt-8 border-t border-white/5 text-stone-500 text-xs">
-          © 2026 Rabbit Boutique - Expertos en Cunicultura Responsable
-        </div>
-      </footer>
+      
     </div>
   );
 }

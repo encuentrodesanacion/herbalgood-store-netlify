@@ -1,7 +1,6 @@
 // src/pages/AdminDashboard.tsx
-
 import React, { useState, useEffect } from "react";
-import { Package, BookOpen, Plus, Edit2, Trash2, LogOut, Loader2, FileText, Rabbit, Heart, Star } from "lucide-react";
+import { Package, BookOpen, Plus, Edit2, Trash2, LogOut, Loader2, FileText, Rabbit, Heart, Star, CheckCircle, Lock } from "lucide-react";
 
 // --- INTERFACES ---
 export interface Product {
@@ -22,6 +21,7 @@ export interface Post {
   content: string;
   category: string;
   image_url: string;
+  is_featured: boolean;
   created_at?: string;
 }
 
@@ -31,13 +31,20 @@ export interface Testimonial {
   content: string;
   rating: number;
   image_url: string;
+  status: string;
   createdAt?: string;
 }
 
 export default function AdminDashboard() {
-  const [activeTab, setActiveTab] = useState("productos");
-  
+  // 👇 ESTADOS DE AUTENTICACIÓN
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(!!localStorage.getItem("adminToken"));
+  const [loginUser, setLoginUser] = useState("");
+  const [loginPass, setLoginPass] = useState("");
+  const [loginError, setLoginError] = useState("");
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+
   // --- ESTADOS DE PRODUCTOS ---
+  const [activeTab, setActiveTab] = useState("productos");
   const [products, setProducts] = useState<Product[]>([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
@@ -53,7 +60,7 @@ export default function AdminDashboard() {
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
   const [newPost, setNewPost] = useState({
-    title: '', excerpt: '', content: '', category: 'Razas y Genética'
+    title: '', excerpt: '', content: '', category: 'Razas y Genética', is_featured: false
   });
   const [postFile, setPostFile] = useState<File | null>(null);
 
@@ -61,12 +68,53 @@ export default function AdminDashboard() {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [loadingTestimonials, setLoadingTestimonials] = useState(true);
 
-  // --- EFECTOS PARA CARGAR DATOS ---
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
+  // Solo cargar datos si el usuario está autenticado
   useEffect(() => {
-    if (activeTab === "productos") fetchProducts();
-    if (activeTab === "bitacora") fetchPosts();
-    if (activeTab === "testimonios") fetchTestimonials();
-  }, [activeTab]);
+    if (isAuthenticated) {
+      if (activeTab === "productos") fetchProducts();
+      if (activeTab === "bitacora") fetchPosts();
+      if (activeTab === "testimonios") fetchTestimonials();
+    }
+  }, [activeTab, isAuthenticated]);
+
+  // ==========================================
+  //         LÓGICA DE LOGIN Y LOGOUT
+  // ==========================================
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoggingIn(true);
+    setLoginError("");
+
+    try {
+      const response = await fetch(`${API_URL}/api/auth/admin-login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: loginUser, password: loginPass })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        localStorage.setItem("adminToken", data.token);
+        setIsAuthenticated(true);
+      } else {
+        setLoginError("Usuario o contraseña incorrectos");
+      }
+    } catch (error) {
+      setLoginError("Error de conexión con el servidor");
+    } finally {
+      setIsLoggingIn(false);
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("adminToken");
+    setIsAuthenticated(false);
+    setLoginUser("");
+    setLoginPass("");
+  };
 
   // ==========================================
   //         LÓGICA DE PRODUCTOS
@@ -74,7 +122,7 @@ export default function AdminDashboard() {
   const fetchProducts = async () => {
     try {
       setLoadingProducts(true);
-      const response = await fetch('http://localhost:5000/api/products');
+      const response = await fetch(`${API_URL}/api/products`);
       const data = await response.json();
       setProducts(data);
     } catch (error) {
@@ -100,7 +148,6 @@ export default function AdminDashboard() {
 
   const handleSubmitProduct = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     const formData = new FormData();
     formData.append('name', newProduct.name);
     formData.append('price', String(newProduct.price));
@@ -108,11 +155,10 @@ export default function AdminDashboard() {
     formData.append('description', newProduct.description);
     formData.append('category', newProduct.category);
     formData.append('is_featured', String(newProduct.is_featured));
-    
     if (productFile) formData.append('image', productFile);
 
     try {
-      const url = editingProductId ? `http://localhost:5000/api/products/${editingProductId}` : 'http://localhost:5000/api/products';
+      const url = editingProductId ? `${API_URL}/api/products/${editingProductId}` : `${API_URL}/api/products`;
       const response = await fetch(url, {
         method: editingProductId ? 'PUT' : 'POST',
         body: formData 
@@ -129,10 +175,10 @@ export default function AdminDashboard() {
   const handleDeleteProduct = async (id: string) => {
     if (!window.confirm("¿Eliminar este registro del inventario?")) return;
     try {
-      const response = await fetch(`http://localhost:5000/api/products/${id}`, { method: 'DELETE' });
+      const response = await fetch(`${API_URL}/api/products/${id}`, { method: 'DELETE' });
       if (response.ok) setProducts(products.filter(p => p.id !== id));
     } catch (error) {
-      alert("Error al eliminar el registro.");
+      alert("Error al eliminar the registro.");
     }
   };
 
@@ -142,7 +188,7 @@ export default function AdminDashboard() {
   const fetchPosts = async () => {
     try {
       setLoadingPosts(true);
-      const response = await fetch('http://localhost:5000/api/posts');
+      const response = await fetch(`${API_URL}/api/posts`);
       if (response.ok) {
         const data = await response.json();
         setPosts(data);
@@ -156,7 +202,7 @@ export default function AdminDashboard() {
 
   const handleNewPostClick = () => {
     setEditingPostId(null);
-    setNewPost({ title: '', excerpt: '', content: '', category: 'Razas y Genética' });
+    setNewPost({ title: '', excerpt: '', content: '', category: 'Razas y Genética', is_featured: false });
     setPostFile(null); 
     setIsPostModalOpen(true);
   };
@@ -167,7 +213,8 @@ export default function AdminDashboard() {
       title: post.title, 
       excerpt: post.excerpt || '', 
       content: post.content || '', 
-      category: post.category || 'General'
+      category: post.category || 'General',
+      is_featured: post.is_featured === true || String(post.is_featured) === 'true'
     });
     setPostFile(null); 
     setIsPostModalOpen(true);
@@ -175,17 +222,16 @@ export default function AdminDashboard() {
 
   const handleSubmitPost = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     const formData = new FormData();
     formData.append('title', newPost.title);
     formData.append('excerpt', newPost.excerpt);
     formData.append('content', newPost.content);
     formData.append('category', newPost.category);
-    
+    formData.append('is_featured', String(newPost.is_featured));
     if (postFile) formData.append('image', postFile);
 
     try {
-      const url = editingPostId ? `http://localhost:5000/api/posts/${editingPostId}` : 'http://localhost:5000/api/posts';
+      const url = editingPostId ? `${API_URL}/api/posts/${editingPostId}` : `${API_URL}/api/posts`;
       const response = await fetch(url, {
         method: editingPostId ? 'PUT' : 'POST',
         body: formData 
@@ -202,7 +248,7 @@ export default function AdminDashboard() {
   const handleDeletePost = async (id: string) => {
     if (!window.confirm("¿Estás seguro de eliminar esta guía?")) return;
     try {
-      const response = await fetch(`http://localhost:5000/api/posts/${id}`, { method: 'DELETE' });
+      const response = await fetch(`${API_URL}/api/posts/${id}`, { method: 'DELETE' });
       if (response.ok) setPosts(posts.filter(p => p.id !== id));
     } catch (error) {
       alert("Error al eliminar la guía.");
@@ -215,7 +261,7 @@ export default function AdminDashboard() {
   const fetchTestimonials = async () => {
     try {
       setLoadingTestimonials(true);
-      const response = await fetch('http://localhost:5000/api/testimonials');
+      const response = await fetch(`${API_URL}/api/testimonials/admin-list`);
       if (response.ok) {
         const data = await response.json();
         setTestimonials(data);
@@ -227,17 +273,91 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleApproveTestimonial = async (id: number) => {
+    try {
+      const response = await fetch(`${API_URL}/api/testimonials/approve/${id}`, {
+        method: 'PUT'
+      });
+      if (response.ok) {
+        setTestimonials(testimonials.map(t => t.id === id ? { ...t, status: 'approved' } : t));
+      } else {
+        alert("No se pudo aprobar el testimonio.");
+      }
+    } catch (error) {
+      alert("Error de conexión al intentar aprobar.");
+    }
+  };
+
   const handleDeleteTestimonial = async (id: number) => {
     if (!window.confirm("¿Eliminar este testimonio? Esta acción no se puede deshacer.")) return;
     try {
-      const response = await fetch(`http://localhost:5000/api/testimonials/${id}`, { method: 'DELETE' });
+      const response = await fetch(`${API_URL}/api/testimonials/${id}`, { method: 'DELETE' });
       if (response.ok) setTestimonials(testimonials.filter(t => t.id !== id));
     } catch (error) {
       alert("Error al eliminar el testimonio.");
     }
   };
 
+  // 👇 RENDERIZADO CONDICIONAL: PANTALLA DE LOGIN
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-stone-950 flex items-center justify-center p-4 font-sans selection:bg-green-500 selection:text-white">
+        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 pointer-events-none"></div>
+        
+        <div className="bg-white rounded-[2.5rem] p-10 w-full max-w-md shadow-2xl relative z-10 animate-in fade-in zoom-in-95 duration-500">
+          <div className="flex flex-col items-center mb-8">
+            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-4 text-green-600 shadow-inner">
+              <Lock size={40} />
+            </div>
+            <h1 className="text-3xl font-bold text-stone-900 font-serif">Panel Maestro</h1>
+            <p className="text-stone-500 text-sm mt-2 text-center">Acceso restringido solo para personal autorizado de Chileconejitos.</p>
+          </div>
 
+          <form onSubmit={handleLogin} className="space-y-5">
+            {loginError && (
+              <div className="bg-red-50 text-red-600 text-sm font-bold p-4 rounded-2xl text-center border border-red-100">
+                {loginError}
+              </div>
+            )}
+            
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-2">Usuario</label>
+              <input 
+                type="text" 
+                required 
+                value={loginUser}
+                onChange={(e) => setLoginUser(e.target.value)}
+                className="w-full bg-stone-50 border border-stone-200 p-4 rounded-2xl focus:ring-2 focus:ring-green-500 outline-none transition-all" 
+                placeholder="Ingresa tu usuario"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-2">Contraseña</label>
+              <input 
+                type="password" 
+                required 
+                value={loginPass}
+                onChange={(e) => setLoginPass(e.target.value)}
+                className="w-full bg-stone-50 border border-stone-200 p-4 rounded-2xl focus:ring-2 focus:ring-green-500 outline-none transition-all" 
+                placeholder="••••••••"
+              />
+            </div>
+
+            <button 
+              type="submit" 
+              disabled={isLoggingIn}
+              className="w-full bg-green-600 text-white font-bold py-4 rounded-2xl hover:bg-green-700 transition-colors shadow-lg flex items-center justify-center gap-2 mt-4"
+            >
+              {isLoggingIn ? <Loader2 className="animate-spin" size={20} /> : "Ingresar al Panel"}
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
+  // 👇 RENDERIZADO DEL PANEL PRINCIPAL (Si está autenticado)
   return (
     <div className="min-h-screen bg-stone-50 flex font-sans text-stone-800">
       
@@ -245,7 +365,7 @@ export default function AdminDashboard() {
       <aside className="w-64 bg-stone-950 text-green-50 flex flex-col shadow-xl z-10 shrink-0">
         <div className="p-6 border-b border-white/10">
           <h2 className="text-2xl font-bold text-green-500 tracking-tight flex items-center gap-2">
-            <Rabbit size={24} /> Boutique
+            <Rabbit size={24} /> Chileconejitos
           </h2>
           <span className="text-xs text-stone-400 uppercase tracking-widest mt-1 block">Panel Maestro</span>
         </div>
@@ -263,7 +383,10 @@ export default function AdminDashboard() {
         </nav>
 
         <div className="p-4 border-t border-white/10">
-          <button className="w-full flex items-center justify-center gap-2 px-4 py-2 text-stone-400 hover:text-red-400 transition-colors">
+          <button 
+            onClick={handleLogout}
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 text-stone-400 hover:text-white hover:bg-red-500/20 rounded-xl transition-all font-medium"
+          >
             <LogOut size={18} /> Cerrar Sesión
           </button>
         </div>
@@ -280,9 +403,9 @@ export default function AdminDashboard() {
                 <h1 className="text-3xl font-bold text-stone-800">Inventario del Criadero</h1>
                 <p className="text-stone-500 mt-1">Conectado a PostgreSQL mediante Sequelize.</p>
               </div>
-             <button onClick={handleNewProductClick} className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-xl flex items-center gap-2 transition-all shadow-md">
-               <Plus size={20} /> Nuevo Registro
-             </button>
+              <button onClick={handleNewProductClick} className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-xl flex items-center gap-2 transition-all shadow-md">
+                <Plus size={20} /> Nuevo Registro
+              </button>
             </div>
 
             {loadingProducts ? (
@@ -307,7 +430,7 @@ export default function AdminDashboard() {
                       <tr key={product.id} className="hover:bg-green-50/50 transition-colors">
                         <td className="p-4 flex items-center gap-3">
                           <div className="w-10 h-10 rounded-md bg-stone-100 overflow-hidden shrink-0">
-                             <img src={product.image_url ? `http://localhost:5000/${product.image_url}` : "https://images.pexels.com/photos/3313348/pexels-photo-3313348.jpeg"} alt={product.name} className="w-full h-full object-cover" />
+                             <img src={product.image_url ? (product.image_url.startsWith('http') ? product.image_url : `${API_URL}/${product.image_url}`) : "https://images.pexels.com/photos/3313348/pexels-photo-3313348.jpeg"} alt={product.name} className="w-full h-full object-cover" />
                           </div>
                           <span className="font-medium text-stone-800">{product.name}</span>
                         </td>
@@ -329,17 +452,17 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {/* PESTAÑA: BITÁCORA APÍCOLA -> GUÍAS Y CUIDADOS */}
+        {/* PESTAÑA: GUÍAS Y CUIDADOS */}
         {activeTab === "bitacora" && (
           <div className="animate-fade-in">
              <div className="flex justify-between items-center mb-8">
               <div>
                 <h1 className="text-3xl font-bold text-stone-800">Guías y Cuidados</h1>
-                <p className="text-stone-500 mt-1">Comparte conocimientos sobre tenencia responsable y veterinaria.</p>
+                <p className="text-stone-500 mt-1">Gestiona las guías y escoge cuáles destacar en la página principal.</p>
               </div>
-             <button onClick={handleNewPostClick} className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-xl flex items-center gap-2 transition-all shadow-md">
-               <Plus size={20} /> Nueva Guía
-             </button>
+              <button onClick={handleNewPostClick} className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-xl flex items-center gap-2 transition-all shadow-md">
+                <Plus size={20} /> Nueva Guía
+              </button>
             </div>
 
             {loadingPosts ? (
@@ -354,7 +477,7 @@ export default function AdminDashboard() {
                     <tr className="bg-stone-100 text-stone-600 text-sm uppercase tracking-wider">
                       <th className="p-4 font-semibold">Publicación</th>
                       <th className="p-4 font-semibold">Categoría</th>
-                      <th className="p-4 font-semibold">Fecha Creación</th>
+                      <th className="p-4 font-semibold">Destacado (Home)</th>
                       <th className="p-4 font-semibold text-right">Acciones</th>
                     </tr>
                   </thead>
@@ -364,7 +487,7 @@ export default function AdminDashboard() {
                         <td className="p-4 flex items-center gap-3">
                           <div className="w-10 h-10 rounded-md bg-stone-100 overflow-hidden shrink-0 flex items-center justify-center text-stone-400">
                              {post.image_url ? (
-                               <img src={`http://localhost:5000/${post.image_url}`} alt={post.title} className="w-full h-full object-cover" />
+                               <img src={post.image_url.startsWith('http') ? post.image_url : `${API_URL}/${post.image_url}`} alt={post.title} className="w-full h-full object-cover" />
                              ) : (
                                <FileText size={20} />
                              )}
@@ -379,8 +502,14 @@ export default function AdminDashboard() {
                             {post.category || 'General'}
                           </span>
                         </td>
-                        <td className="p-4 text-stone-600 text-sm">
-                          {post.created_at ? new Date(post.created_at).toLocaleDateString('es-ES') : 'Reciente'}
+                        <td className="p-4">
+                          {post.is_featured ? (
+                            <span className="flex items-center gap-1 text-xs font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded-md border border-amber-200 w-fit">
+                              <Star size={12} fill="currentColor" /> Portada
+                            </span>
+                          ) : (
+                            <span className="text-xs text-stone-400">-</span>
+                          )}
                         </td>
                         <td className="p-4">
                           <div className="flex justify-end gap-2">
@@ -422,32 +551,52 @@ export default function AdminDashboard() {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {testimonials.length > 0 ? testimonials.map((t) => (
-                  <div key={t.id} className="bg-white p-6 rounded-3xl shadow-sm border border-stone-100 relative hover:shadow-md transition-shadow">
-                    <button 
-                      onClick={() => handleDeleteTestimonial(t.id)}
-                      className="absolute top-4 right-4 text-red-400 hover:bg-red-50 hover:text-red-600 p-2 rounded-full transition-colors"
-                      title="Eliminar testimonio"
-                    >
-                      <Trash2 size={18} />
-                    </button>
+                  <div key={t.id} className={`bg-white p-6 rounded-3xl shadow-sm border relative flex flex-col justify-between hover:shadow-md transition-shadow ${t.status === 'pending' ? 'border-amber-200 bg-amber-50/10' : 'border-stone-100'}`}>
                     
-                    <div className="flex items-center gap-4 mb-4">
-                      <div className="w-12 h-12 rounded-full bg-stone-100 overflow-hidden shrink-0 border border-stone-200">
-                        <img 
-                          src={t.image_url ? `http://localhost:5000/${t.image_url}` : "https://via.placeholder.com/50"} 
-                          className="w-full h-full object-cover" 
-                          alt={t.author_name}
-                        />
+                    <div>
+                      <div className="absolute top-4 right-14">
+                        {t.status === 'pending' ? (
+                          <span className="bg-amber-100 text-amber-800 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full">Pendiente</span>
+                        ) : (
+                          <span className="bg-green-100 text-green-800 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full">Publicado</span>
+                        )}
                       </div>
-                      <div>
-                        <h3 className="font-bold text-stone-800">{t.author_name}</h3>
-                        <div className="flex text-yellow-400">
-                          {[...Array(t.rating || 5)].map((_, i) => <Star key={i} size={14} fill="currentColor" />)}
+
+                      <button 
+                        onClick={() => handleDeleteTestimonial(t.id)}
+                        className="absolute top-2 right-2 text-stone-400 hover:bg-red-50 hover:text-red-600 p-2 rounded-full transition-colors"
+                        title="Eliminar / Rechazar testimonio"
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                      
+                      <div className="flex items-center gap-4 mb-4">
+                        <div className="w-12 h-12 rounded-full bg-stone-100 overflow-hidden shrink-0 border border-stone-200">
+                          <img 
+                            src={t.image_url ? (t.image_url.startsWith('http') ? t.image_url : `${API_URL}/${t.image_url}`) : "https://via.placeholder.com/50"} 
+                            className="w-full h-full object-cover" 
+                            alt={t.author_name}
+                          />
+                        </div>
+                        <div>
+                          <h3 className="font-bold text-stone-800">{t.author_name}</h3>
+                          <div className="flex text-yellow-400">
+                            {[...Array(t.rating || 5)].map((_, i) => <Star key={i} size={14} fill="currentColor" />)}
+                          </div>
                         </div>
                       </div>
+                      
+                      <p className="text-stone-600 italic text-sm mb-6">"{t.content}"</p>
                     </div>
-                    
-                    <p className="text-stone-600 italic text-sm">"{t.content}"</p>
+
+                    {t.status === 'pending' && (
+                      <button
+                        onClick={() => handleApproveTestimonial(t.id)}
+                        className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-xl text-xs flex items-center justify-center gap-1.5 transition-colors shadow-sm mt-auto"
+                      >
+                        <CheckCircle size={14} /> Aprobar y Publicar
+                      </button>
+                    )}
                   </div>
                 )) : (
                   <div className="col-span-full py-12 text-center text-stone-400 flex flex-col items-center bg-white rounded-3xl border border-stone-100 border-dashed">
@@ -512,12 +661,12 @@ export default function AdminDashboard() {
               <div className="flex items-center gap-2 mt-2">
                 <input 
                   type="checkbox" 
-                  id="is_featured" 
+                  id="is_featured_product" 
                   checked={newProduct.is_featured} 
                   onChange={(e) => setNewProduct({...newProduct, is_featured: e.target.checked})} 
                   className="w-4 h-4 text-green-600 rounded border-stone-300 focus:ring-green-500" 
                 />
-                <label htmlFor="is_featured" className="text-sm font-bold text-stone-600 cursor-pointer">Destacar en la página de inicio</label>
+                <label htmlFor="is_featured_product" className="text-sm font-bold text-stone-600 cursor-pointer">Destacar en la página de inicio</label>
               </div>
               
               <div>
@@ -528,7 +677,6 @@ export default function AdminDashboard() {
                   className="w-full border border-stone-200 rounded-xl p-2 bg-stone-50 cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-100 file:text-green-800 hover:file:bg-green-200" 
                   onChange={(e) => setProductFile(e.target.files ? e.target.files[0] : null)} 
                 />
-                {editingProductId && <p className="text-xs text-stone-400 mt-1">Deja esto en blanco si no quieres cambiar la imagen actual.</p>}
               </div>
 
               <div className="flex gap-3 mt-6 pt-4 border-t border-stone-100">
@@ -576,6 +724,19 @@ export default function AdminDashboard() {
               <div>
                 <label className="block text-xs font-bold uppercase text-stone-500 mb-1">Contenido Principal</label>
                 <textarea required rows={8} value={newPost.content} className="w-full border border-stone-200 rounded-xl p-3 bg-stone-50 resize-y focus:ring-2 focus:ring-green-500 outline-none" onChange={(e) => setNewPost({...newPost, content: e.target.value})} />
+              </div>
+
+              <div className="flex items-center gap-2 mt-2 bg-amber-50 p-3 rounded-xl border border-amber-100">
+                <input 
+                  type="checkbox" 
+                  id="is_featured_post" 
+                  checked={newPost.is_featured} 
+                  onChange={(e) => setNewPost({...newPost, is_featured: e.target.checked})} 
+                  className="w-5 h-5 text-amber-600 rounded border-amber-300 focus:ring-amber-500" 
+                />
+                <label htmlFor="is_featured_post" className="text-sm font-bold text-amber-800 cursor-pointer flex items-center gap-1.5">
+                  <Star size={16} fill="currentColor" /> Destacar en la sección "Aprende con Nosotros" (Inicio)
+                </label>
               </div>
 
               <div>

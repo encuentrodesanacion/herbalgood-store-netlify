@@ -6,7 +6,11 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const auth = require('../middleware/auth'); // Importamos el guardia
 
-// 1. REGISTRO
+// ==========================================
+// 1. RUTAS PARA CLIENTES / USUARIOS NORMALES
+// ==========================================
+
+// REGISTRO
 router.post('/register', async (req, res) => {
   const { name, email, password } = req.body;
   try {
@@ -29,7 +33,7 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// 2. LOGIN
+// LOGIN CLIENTES
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -50,10 +54,9 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// 3. OBTENER USUARIO ACTUAL (Ruta protegida para "Mi Cuenta")
+// OBTENER USUARIO ACTUAL (Ruta protegida para "Mi Cuenta")
 router.get('/me', auth, async (req, res) => {
   try {
-    // Buscamos al usuario por ID pero NO devolvemos la contraseña
     const user = await User.findByPk(req.user.id, {
       attributes: { exclude: ['password'] }
     });
@@ -62,6 +65,33 @@ router.get('/me', auth, async (req, res) => {
     console.error(err.message);
     res.status(500).send('Error del servidor');
   }
+});
+
+// ==========================================
+// 2. RUTA EXCLUSIVA PARA EL ADMINISTRADOR
+// ==========================================
+
+router.post('/admin-login', (req, res) => {
+  const { username, password } = req.body;
+
+  // Verificamos contra las variables de entorno (.env)
+  // Usamos un fallback a strings quemados SOLO por si olvidas ponerlos en el .env
+  const validUser = process.env.ADMIN_USERNAME || 'admin';
+  const validPass = process.env.ADMIN_PASSWORD || 'admin123';
+
+  if (username === validUser && password === validPass) {
+    // Generamos un token especial de administrador válido por 12 horas
+    const token = jwt.sign(
+      { role: 'admin' }, 
+      process.env.JWT_SECRET || 'supersecreto123', 
+      { expiresIn: '12h' }
+    );
+    
+    return res.json({ success: true, token });
+  }
+
+  // Si las credenciales fallan
+  return res.status(401).json({ success: false, message: 'Credenciales de administrador incorrectas' });
 });
 
 module.exports = router;

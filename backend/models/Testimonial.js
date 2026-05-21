@@ -8,6 +8,11 @@ const Testimonial = sequelize.define('Testimonial', {
     primaryKey: true, 
     autoIncrement: true 
   },
+  status: {
+  type: DataTypes.STRING,
+  defaultValue: 'pending', // Por defecto, todo testimonio nuevo queda "pendiente"
+  allowNull: false
+},
   author_name: { 
     type: DataTypes.STRING, 
     allowNull: false 

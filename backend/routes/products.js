@@ -55,6 +55,20 @@ router.post('/', upload.single('image'), async (req, res) => {
   }
 });
 
+router.get('/:id', async (req, res) => {
+  try {
+    const product = await Product.findByPk(req.params.id);
+    
+    if (!product) {
+      return res.status(404).json({ msg: 'Producto no encontrado en la base de datos' });
+    }
+    
+    res.json(product);
+  } catch (error) {
+    console.error("Error al buscar el producto por ID:", error);
+    res.status(500).json({ msg: 'Error al obtener el producto' });
+  }
+});
 // ==========================================
 // ELIMINAR un producto
 // ==========================================

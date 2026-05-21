@@ -58,7 +58,7 @@ export default function Navbar({ onNavigate, cartItemCount }: NavbarProps) {
            {/* Derecha: Correo */}
            <div className="flex items-center gap-2 hover:text-green-400 transition-colors cursor-pointer">
               <Mail size={14} /> 
-              <span className="tracking-wide">Ruben@Chileconejitos.cl</span>
+              <span className="tracking-wide">info@chileconejitos.cl</span>
            </div>
         </div>
       </div>

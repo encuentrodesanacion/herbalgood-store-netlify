@@ -1,5 +1,3 @@
-// src/pages/TestimoniosPage.tsx
-
 import { useState, useEffect } from "react";
 import { Star, Loader2, Quote, MessageSquareHeart, Users, Plus, X, Upload, Send } from "lucide-react";
 
@@ -8,11 +6,9 @@ type TestimoniosPageProps = {
 };
 
 export default function TestimoniosPage({ onNavigate }: TestimoniosPageProps) {
-  // Estados para mostrar testimonios
   const [testimonials, setTestimonials] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Estados para el formulario del visitante
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
@@ -23,9 +19,8 @@ export default function TestimoniosPage({ onNavigate }: TestimoniosPageProps) {
     image: null as File | null,
   });
 
-  const API_URL = 'http://localhost:5000';
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
-  // 1. Cargar testimonios
   const fetchTestimonials = async () => {
     try {
       setIsLoading(true);
@@ -45,7 +40,6 @@ export default function TestimoniosPage({ onNavigate }: TestimoniosPageProps) {
     fetchTestimonials();
   }, []);
 
-  // 2. Enviar nuevo testimonio desde el lado del cliente
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -67,16 +61,14 @@ export default function TestimoniosPage({ onNavigate }: TestimoniosPageProps) {
 
       if (response.ok) {
         setSubmitSuccess(true);
-        // Limpiamos el formulario
         setFormData({ author_name: "", content: "", rating: 5, image: null });
-        // Recargamos la lista para que vea su testimonio publicado
-        fetchTestimonials();
         
-        // Cerramos el modal de éxito después de 3 segundos
+        // Ya no llamamos a fetchTestimonials() inmediatamente aquí porque el post está pendiente y no aparecerá
+        
         setTimeout(() => {
           setSubmitSuccess(false);
           setIsFormOpen(false);
-        }, 3000);
+        }, 4000);
       } else {
         alert("Hubo un problema al enviar tu reseña. Por favor, intenta de nuevo.");
       }
@@ -90,8 +82,6 @@ export default function TestimoniosPage({ onNavigate }: TestimoniosPageProps) {
 
   return (
     <div className="min-h-screen bg-green-50/50 font-sans text-stone-900 pb-20">
-      
-      {/* Header de la Página */}
       <header className="relative py-20 px-4 text-center bg-white shadow-sm overflow-hidden border-b border-green-100 mb-16">
         <div className="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/leaves-pattern.png')]"></div>
         <div className="relative z-10 max-w-4xl mx-auto">
@@ -105,7 +95,6 @@ export default function TestimoniosPage({ onNavigate }: TestimoniosPageProps) {
             La mayor recompensa de nuestra crianza ética es ver cómo nuestros ejemplares se convierten en compañeros de vida inseparables.
           </p>
           
-          {/* Botón para abrir el formulario */}
           <button 
             onClick={() => setIsFormOpen(true)}
             className="bg-stone-900 text-white px-8 py-4 rounded-full font-bold hover:bg-green-600 transition-colors shadow-lg flex items-center gap-2 mx-auto"
@@ -116,14 +105,12 @@ export default function TestimoniosPage({ onNavigate }: TestimoniosPageProps) {
       </header>
       
       <div className="max-w-7xl mx-auto px-4">
-        {/* Estado de carga */}
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-20 text-stone-400">
             <Loader2 className="animate-spin mb-4 text-green-500" size={48} />
             <p className="font-medium text-lg">Cargando historias...</p>
           </div>
         ) : testimonials.length === 0 ? (
-          /* Estado vacío */
           <div className="text-center py-20 bg-white rounded-[2rem] border border-stone-100 shadow-sm max-w-3xl mx-auto">
              <Users size={64} className="mx-auto text-green-200 mb-4" />
              <h3 className="text-2xl font-bold text-stone-800 mb-2 font-serif">Aún no hay historias publicadas</h3>
@@ -131,7 +118,6 @@ export default function TestimoniosPage({ onNavigate }: TestimoniosPageProps) {
              <button onClick={() => setIsFormOpen(true)} className="text-green-600 font-bold hover:underline">Escribir una reseña</button>
           </div>
         ) : (
-          /* Grilla de testimonios */
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {testimonials.map((t) => (
               <div 
@@ -144,7 +130,7 @@ export default function TestimoniosPage({ onNavigate }: TestimoniosPageProps) {
                   <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-green-100 border-4 border-white shadow-md overflow-hidden flex items-center justify-center text-green-600">
                     {t.image_url ? (
                       <img 
-                        src={`${API_URL}/${t.image_url}`} 
+                        src={t.image_url.startsWith('http') ? t.image_url : `${API_URL}/${t.image_url}`} 
                         alt={t.author_name}
                         className="w-full h-full object-cover"
                       />
@@ -179,22 +165,19 @@ export default function TestimoniosPage({ onNavigate }: TestimoniosPageProps) {
         )}
       </div>
 
-      {/* MODAL DEL FORMULARIO DE VISITANTE */}
       {isFormOpen && (
         <div className="fixed inset-0 bg-stone-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in-95 duration-200 relative">
             
-            {/* Mensaje de Éxito */}
             {submitSuccess ? (
               <div className="p-12 text-center flex flex-col items-center">
                 <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-6">
                   <Send size={40} />
                 </div>
-                <h2 className="text-3xl font-bold text-stone-800 mb-4 font-serif">¡Gracias por tu reseña!</h2>
-                <p className="text-stone-600">Tu experiencia ha sido compartida con nuestra comunidad de Rabbit Boutique.</p>
+                <h2 className="text-3xl font-bold text-stone-800 mb-4 font-serif">¡Reseña recibida!</h2>
+                <p className="text-stone-600">Muchas gracias por compartir tu historia. Para mantener la seguridad de la comunidad, tu reseña será revisada por el administrador antes de ser publicada de forma definitiva. ✨</p>
               </div>
             ) : (
-              /* Formulario */
               <>
                 <button 
                   onClick={() => setIsFormOpen(false)}
@@ -248,7 +231,7 @@ export default function TestimoniosPage({ onNavigate }: TestimoniosPageProps) {
                         value={formData.content} 
                         onChange={(e) => setFormData({...formData, content: e.target.value})}
                         className="w-full border border-stone-200 rounded-2xl p-4 bg-stone-50 resize-none focus:ring-2 focus:ring-green-500 outline-none transition-all" 
-                        placeholder="¿Cómo se ha adaptado tu orejudo? ¿Qué te pareció nuestra asesoría?"
+                        placeholder="¿Cómo se ha adaptado tu orejudo?"
                       />
                     </div>
 
@@ -273,7 +256,7 @@ export default function TestimoniosPage({ onNavigate }: TestimoniosPageProps) {
                       disabled={isSubmitting}
                       className="w-full bg-green-600 text-white py-4 rounded-2xl font-bold hover:bg-green-700 transition-colors shadow-lg flex items-center justify-center gap-2 mt-4"
                     >
-                      {isSubmitting ? <Loader2 className="animate-spin" size={24} /> : "Publicar mi reseña"}
+                      {isSubmitting ? <Loader2 className="animate-spin" size={24} /> : "Enviar mi reseña"}
                     </button>
                   </form>
                 </div>
